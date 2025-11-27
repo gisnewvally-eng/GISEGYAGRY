@@ -452,24 +452,19 @@ document.querySelectorAll('input[name="basemap"]').forEach(radio => {
     // تفعيل وضع الليل
     setDarkMode(e.target.value === "dark");
 
-
-
-// تغيير لون نص أزرار اختيار الخريطة عند اختيار الخريطة السوداء
-// استهداف كل الـ labels المرتبطة بخيارات الخرائط
-const basemapLabels = document.querySelectorAll('input[name="basemap"]');
-
-basemapLabels.forEach(radio => {
-  radio.addEventListener('change', e => {
+    // تغيير لون نص أزرار اختيار الخريطة عند اختيار الخريطة السوداء
+    const basemapLabels = document.querySelectorAll('input[name="basemap"]');
     basemapLabels.forEach(r => {
-      const label = r.parentElement; // الـ label الذي يحتوي على الـ input
+      const label = r.parentElement;
       if(e.target.value === 'dark'){
-        label.style.color = '#fff'; // النص أبيض
+        label.style.color = '#fff';
       } else {
-        label.style.color = '#000'; // النص أسود
+        label.style.color = '#000';
       }
     });
-  });
-});
+
+  }); // إغلاق addEventListener الخارجي
+}); // إغلاق forEach
 
 /* --------------
    Icons (local files expected in repo)
@@ -798,6 +793,7 @@ document.addEventListener("keydown", e => {
 </script>
 </body>
 </html>
+
 
 
 
