@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+<title>خريطة مرافق مجمع المصالح الحكومية - الوادي الجديد</title>
+<link rel="icon" type="image/png" href="logo.png" />
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<style>
+  :root{
+    --accent:#228B22;
+    --green:#32CD32;
+    --danger:#b22222;
+    --sidebar-width:300px;
+    --header-height:70px;
+    --footer-height:70px;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    padding:0;
+    direction:rtl;
+    font-family:"Cairo",sans-serif;
+    background:#ffffff;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    overflow-x:hidden;
+  }
+
+  /* Header */
+  header{
+    position:fixed;
+    top:0; left:0; right:0;
+    height:var(--header-height);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:12px;
+    background:linear-gradient(90deg,#00b09b,#96c93d);
+    color:#fff;
+    padding:10px;
+    z-index:2200;
+    box-shadow:0 2px 6px rgba(0,0,0,0.12);
+  }
+  header img.logo{
+    height:48px;
+    margin-inline-start:6px; /* logo on the right (rtl) */
+  }
+  header h1{
+    margin:0;
+    font-size:18px;
+    font-weight:700;
+    text-align:center;
+  }
+
+  /* Map centered area */
+  #map{
+    height:80vh;
+    width:100%;
+    margin-top:var(--header-height);
+    margin-bottom:var(--footer-height);
+    border-radius:8px;
+    box-shadow:0 2px 6px rgba(0,0,0,0.12);
+  }
+
+  /* Sidebar - its bottom aligns with the map bottom: height = 80vh and top = header height */
+  #sidebar{
+    position:fixed;
+    top:var(--header-height);
+    right:0;
+    width:var(--sidebar-width);
+    max-width:92%;
+    height:80vh; /* same as map height */
+    background:#fff;
+    border-left:2px solid #32CD32;
+    box-shadow:-2px 0 8px rgba(0,0,0,0.12);
+    overflow-y:auto;
+    z-index:2000;
+    padding:14px 12px 18px 12px;
+    border-radius:0 8px 8px 0;
+    transition:transform .28s ease, background .2s ease;
+  }
+  #sidebar.hidden{ transform: translateX(100%); }
+
+  /* Sidebar sections */
+  .sidebar-section{ margin-bottom:12px; padding-top:8px; }
+  .sidebar-section h3{
+    margin:0 0 8px 0;
+    font-size:15px;
+    color:var(--accent);
+    font-weight:700;
+  }
+  /* in dark mode heads become white - controlled by .dark on sidebar */
+  #sidebar.dark .sidebar-section h3{ color:#fff; }
+
+  /* controls buttons */
+  .controls{ display:flex; flex-direction:column; gap:8px; }
+  .controls button{
+    border:none;
+    padding:10px;
+    border-radius:8px;
+    font-weight:700;
+    cursor:pointer;
+    box-shadow:0 1px 3px rgba(0,0,0,0.1);
+  }
+  .controls .show{ background:var(--green); color:#000; }
+  .controls .hide{ background:var(--danger); color:#fff; }
+  .controls .reset{ background: #f0f9f0; color:#000; border:1px solid #cfe9cf; }
+
+  /* layer groups & items */
+  .layer-group{ margin-bottom:10px; border-bottom:1px solid #eee; padding-bottom:8px; }
+  .layer-group h4{
+    margin:6px 0;
+    font-size:14px;
+    color:var(--accent);
+    cursor:pointer;
+    user-select:none;
+  }
+  .layer-group.collapsed > .group-items{ display:none; }
+  .group-items{ padding-top:6px; display:block; }
+  .layer-item{
+    background: rgba(245, 245, 245, 0.7); /* الشفافية 70% */
+    color:#000; /* لون النص أسود */
+    padding:8px 10px;
+    border-radius:6px;
+    margin-bottom:8px;
+    cursor:pointer;
+    transition: background .12s, transform .06s;
+    font-size:14px;
+}
+
+.layer-item:hover{ 
+    background: rgba(232, 255, 232, 0.9); /* أخف قليلاً عند المرور */
+    transform: translateY(-1px); 
+}
+
+  /* Footer */
+footer {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    background:linear-gradient(90deg,#00b09b,#96c93d);
+    color: #fff;
+    display: flex;
+    flex-direction: column; /* هذا السطر يجعل النصوص في أعمدة */
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-weight: 700;
+    padding: 6px 0;
+    z-index: 2000;
+}
+
+footer .line2 {
+    font-weight: 600;
+    font-size: 13px;
+    margin-top: 2px;
+}
+
+
+/* 📍 أزرار القوائم والطباعة */
+.top-buttons {
+  position: fixed;
+  top: calc(var(--header-height) + 10px);
+  right: 10px;
+  z-index: 2050;
+  display: flex;
+  gap: 10px; /* المسافة بين الزرين */
+}
+
+/* زر القوائم */
+#toggleSidebar {
+  background: linear-gradient(90deg, #00b09b, #96c93d);
+  color: #fff;
+  border: none;
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-weight: 800;
+  font-size: 18px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s, opacity 0.2s;
+}
+
+#toggleSidebar:hover {
+  transform: scale(1.05);
+  opacity: 0.9;
+}
+
+/* زر الطباعة */
+#printMapBtn {
+  background: linear-gradient(90deg, #96c93d, #00b09b);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 20px;
+  padding: 12px 16px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s, opacity 0.2s;
+}
+
+#printMapBtn:hover {
+  transform: scale(1.05);
+  opacity: 0.9;
+}
+
+/* 🎯 إخفاء أزرار التكبير والتصغير عند الطباعة */
+@media print {
+  .leaflet-control-zoom {
+    display: none !important;
+  }
+}
+
+  
+/* 📄 عند الطباعة — إخفاء الزرين */
+@media print {
+  .top-buttons { display: none; }
+  header, footer {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+
+/* 📱 وضع الهاتف: زر الطباعة في منتصف الشاشة أسفل الهيدر */
+@media (max-width: 600px) {
+  #printMapBtn {
+    left: 50%;
+    transform: translateX(-50%);
+    top: calc(var(--header-height) + 8px);
+  }
+}
+
+/* 🖨️ إعدادات الطباعة */
+@media print {
+  /* إخفاء زر القوائم وزر الطباعة عند الطباعة */
+  #toggleSidebar,
+  #printMapBtn {
+    display: none !important;
+  }
+
+  /* جعل الخريطة تغطي الصفحة بالكامل */
+  #map {
+    height: 80vh !important;
+  }
+
+  /* السماح بطباعة الألوان في الهيدر والفوتر */
+  header,
+  footer {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+}
+
+
+  /* Loader overlay fullscreen */
+  #loaderOverlay{
+    position:fixed;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    background: rgba(0,0,0,0.45);
+    z-index:3000;
+  }
+  #loaderBox{
+    background: rgba(255,255,255,0.95);
+    padding:22px;
+    border-radius:12px;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    box-shadow:0 6px 30px rgba(0,0,0,0.25);
+  }
+  #loaderBox img{ height:64px; width:auto; display:block; }
+  .spinner{
+    width:44px; height:44px;
+    border-radius:50%;
+    border:6px solid rgba(0,0,0,0.08);
+    border-top-color:var(--accent);
+    animation:spin 1s linear infinite;
+  }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+
+  /* Dark mode on sidebar: change bg but keep item text black (as requested) */
+  #sidebar.dark{ background:#111; }
+  #sidebar.dark .layer-item{ background:#222; color:#000; } /* dark bg but text black */
+
+  /* Responsive */
+  @media (max-width:900px){
+    :root{ --sidebar-width:85vw; }
+    #sidebar{ width:85vw; left: auto; right:0; }
+    #toggleSidebar{ right:8px; top: calc(var(--header-height)+8px); }
+    header img.logo{ height:44px; }
+    header h1{ font-size:16px; }
+  }
+  @media (max-width:480px){
+    #map{ height:70vh; }
+    #sidebar{ height:70vh; top:var(--header-height); }
+    .floating-buttons button{ min-width:34px; height:34px; font-size:15px; }
+  }
+/* 🔹 North Arrow داخل الخريطة */
+#map #northArrow {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  width: 60px;
+  height: 60px;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  cursor: pointer; /* ✅ الآن يمكن النقر عليه */
+  transition: transform 0.5s ease;
+}
+
+#map #northArrow::after {
+  content: "";
+  display: block;
+  width: 40px;
+  height: 40px;
+  background: url('north.png') no-repeat center/contain;
+}
+
+/* في الوضع الليلي */
+body.dark-mode #map #northArrow {
+  background: rgba(0, 0, 0, 0.6);
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.3);
+}
+
+/* 🔸 في الهواتف */
+@media (max-width: 768px) {
+  #map #northArrow {
+    bottom: 90px; /* أعلى قليلًا لتجنّب الفوتر */
+    left: 15px;
+  }
+}
+
+
+</style>
+</head>
+<body>
+
+  <!-- Loader overlay (covers whole page) -->
+  <div id="loaderOverlay">
+    <div id="loaderBox" role="status" aria-live="polite">
+      <img src="logo.png" alt="Logo">
+      <div>
+        <div class="spinner" aria-hidden="true"></div>
+        <div style="margin-top:8px;font-weight:700;color:#222;text-align:right">جارٍ تحميل الخريطة والطبقات...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header with logo on the right (RTL) -->
+  <header id="header">
+    <img src="logo.png" class="logo" alt="شعار">
+    <h1>خريطة مرافق مجمع المصالح الحكومية بمحافظة الوادي الجديد</h1>
+  </header>
+
+ <!-- أزرار القوائم والطباعة بجانب بعض -->
+<div class="top-buttons">
+  <button id="toggleSidebar" aria-controls="sidebar" aria-expanded="false">☰ القوائم</button>
+  <button id="printMapBtn" title="طباعة الخريطة">🖨️</button>
+</div>
+
+  <!-- Sidebar -->
+  <aside id="sidebar" class="hidden" aria-hidden="true">
+    
+   <div style="height:28px;"></div>
+
+
+    <!-- Basemap selection -->
+    <div class="sidebar-section" style="padding-top:40px;">
+      <h3>اختيار نوع الخريطة</h3>
+      <div style="padding:6px 2px;"><label><input type="radio" name="basemap" value="osm" checked> 🗺️ خريطة الطرق</label></div>
+      <div style="padding:6px 2px;"><label><input type="radio" name="basemap" value="satellite"> 🛰️ خريطة الأقمار الصناعية</label></div>
+      <div style="padding:6px 2px;"><label><input type="radio" name="basemap" value="dark"> 🌑 الخريطة السوداء</label></div>
+    </div>
+
+    <!-- Controls -->
+    <div class="sidebar-section">
+      <h3>التحكم في المرافق</h3>
+      <div class="controls">
+        <button id="showAll" class="show">عرض جميع المرافق</button>
+        <button id="hideAll" class="hide">إخفاء جميع المرافق</button>
+        <button id="resetMap" class="reset">إعادة ضبط العرض</button>
+      </div>
+    </div>
+
+    <!-- Layer groups -->
+    <div class="sidebar-section">
+      <h3>قائمة المرافق</h3>
+      <div id="layerGroups" aria-live="polite"></div>
+    </div>
+  </aside>
+
+  <!-- Map -->
+  <div id="map" role="application" aria-label="خريطة المرافق">
+  <!-- سهم الشمال داخل الخريطة لتكون طبقاته مرتبة -->
+  <div id="northArrow" title="اتجاه الشمال"></div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    إعداد جهاز معلومات شبكات المرافق - محافظة الوادي الجديد
+    <span class="line2">Designed By Eng. Ahmed Labib </span>
+  </footer>
+
+<script>
+/* -----------------------
+   Base maps and Map init
+   ----------------------- */
+const baseMaps = {
+  osm: L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19, attribution:'© OpenStreetMap contributors'}),
+  satellite: L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",{maxZoom:19}),
+  dark: L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",{maxZoom:19})
+};
+
+const map = L.map('map', {
+  center:[25.687,30.841],
+  zoom:16,
+  layers:[baseMaps.osm],
+  zoomControl:true
+});
+
+/* Toggle header/sidebar dark class when dark basemap chosen */
+function setDarkMode(isDark){
+  const sidebar=document.getElementById('sidebar');
+  const header=document.getElementById('header');
+  sidebar.classList.toggle('dark', isDark);
+  header.classList.toggle('dark', isDark);
+}
+document.querySelectorAll('input[name="basemap"]').forEach(radio => {
+  radio.addEventListener("change", e => {
+    // إزالة جميع طبقات الأساس الحالية
+    map.eachLayer(l => { if(l instanceof L.TileLayer) map.removeLayer(l); });
+    // إضافة الطبقة الجديدة
+    map.addLayer(baseMaps[e.target.value]);
+
+    // تفعيل وضع الليل
+    setDarkMode(e.target.value === "dark");
+
+    // إخفاء أو إظهار طبقة المباني حسب نوع الخريطة
+    if(allLayers["المباني 🏢"]){
+      if(e.target.value === "satellite"){
+        map.removeLayer(allLayers["المباني 🏢"]);
+      } else {
+        map.addLayer(allLayers["المباني 🏢"]);
+      }
+    }
+  });
+});
+
+// تغيير لون نص أزرار اختيار الخريطة عند اختيار الخريطة السوداء
+// استهداف كل الـ labels المرتبطة بخيارات الخرائط
+const basemapLabels = document.querySelectorAll('input[name="basemap"]');
+
+basemapLabels.forEach(radio => {
+  radio.addEventListener('change', e => {
+    basemapLabels.forEach(r => {
+      const label = r.parentElement; // الـ label الذي يحتوي على الـ input
+      if(e.target.value === 'dark'){
+        label.style.color = '#fff'; // النص أبيض
+      } else {
+        label.style.color = '#000'; // النص أسود
+      }
+    });
+  });
+});
+
+/* --------------
+   Icons (local files expected in repo)
+   -------------- */
+const icons = {
+  electric: L.icon({iconUrl:"electrictrans.png", iconSize:[26,26]}),
+  networking: L.icon({iconUrl:"networking.png", iconSize:[26,26]}),
+  valve: L.icon({iconUrl:"valve.png", iconSize:[26,26]}),
+  sewer: L.icon({iconUrl:"sewer.png", iconSize:[26,26]}),
+  station: L.icon({iconUrl:"محطة_الرفع-removebg-preview.png", iconSize:[28,28]}),
+  rober: L.icon({iconUrl:"rober.png", iconSize:[28,28]})
+};
+
+/* --------------------------
+   Layers metadata (your GeoJSON files)
+   -------------------------- */
+const layersInfo = {
+  "خطوط الكهرباء ⚡": {file:"layers/electric_lines.geojson", color:"#ff0000"},
+  "محولات الكهرباء ⚡": {file:"layers/electric_points.geojson", icon:icons.electric},
+  "خطوط الإنترنت": {file:"layers/landline_lines.geojson", color:"#00cc66"},
+  "نقاط توزيع الإنترنت": {file:"layers/landline_points.geojson", icon:icons.networking},
+  "خطوط المياه 🚰": {file:"layers/water_lines.geojson", color:"#007bff"},
+  "محابس المياه 🚰": {file:"layers/water_points.geojson", icon:icons.valve},
+  "خطوط الصرف الصحي 💧": {file:"layers/Sewer_line.geojson", color:"#800080"},
+  "غرف تفتيش الصرف": {file:"layers/Sewer_points3.geojson", icon:icons.sewer},
+  "غرف غسيل الصرف": {file:"layers/Sewer_points2.geojson", icon:icons.sewer},
+  "غرف صرف صحي": {file:"layers/Sewer_points1.geojson", icon:icons.sewer},
+  "محطة الرفع": {file:"layers/Sewer_station.geojson", icon:icons.station},
+  "المباني 🏢": {file:"layers/buildings.geojson", color:"#DEB887"},
+  "روبير 📍": {file:"layers/rober.geojson", icon:icons.rober}
+};
+
+/* Groups (for UI) */
+const groups = {
+  "الكهرباء ⚡": ["خطوط الكهرباء ⚡","محولات الكهرباء ⚡"],
+  "الإنترنت": ["خطوط الإنترنت","نقاط توزيع الإنترنت"],
+  "المياه 🚰": ["خطوط المياه 🚰","محابس المياه 🚰"],
+  "الصرف الصحي 💧": ["خطوط الصرف الصحي 💧","غرف تفتيش الصرف","غرف غسيل الصرف","غرف صرف صحي","محطة الرفع"],
+  "المباني والمواقع": ["المباني 🏢","روبير 📍"]
+};
+
+/* --------------------
+   Load GeoJSON layers
+   -------------------- */
+let allLayers = {};
+let layerBounds = {};
+let loadedCount = 0;
+const totalLayers = Object.keys(layersInfo).length;
+const loaderOverlay = document.getElementById('loaderOverlay');
+
+function checkAllLoadedAndFinish(){
+  if(loadedCount >= totalLayers){
+    // compute union bounds of all loaded layers
+    let union = null;
+    for(const k in layerBounds){
+      const b = layerBounds[k];
+      if(!b || typeof b.isValid !== 'function') continue;
+      if(b.isValid()){
+        union = union ? union.extend(b) : L.latLngBounds(b);
+      }
+    }
+    // if have union, fit to it; otherwise keep default view
+    if(union && union.isValid && union.isValid()){
+      map.fitBounds(union, {padding:[60,60]});
+    }
+    // hide loader
+    setTimeout(()=> {
+      loaderOverlay.style.display = 'none';
+    }, 300);
+  }
+}
+
+for(const [name, info] of Object.entries(layersInfo)){
+  fetch(info.file).then(r=>{
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    return r.json();
+  }).then(data=>{
+    const layer = L.geoJSON(data, {
+      style: feat=>{
+        if(name === "المباني 🏢") return {color:"#8B4513", weight:1, fillColor:"#DEB887", fillOpacity:0.4};
+        return {color: info.color || "#3388ff", weight:2, fillOpacity:0.7};
+      },
+      pointToLayer: (feat, latlng) => {
+        if(info.icon) return L.marker(latlng, {icon: info.icon});
+        // fallback for points: small circle marker
+        return L.circleMarker(latlng, {radius:6, fillColor: info.color||'#3388ff', color:'#fff', weight:1, fillOpacity:0.9});
+      },
+      onEachFeature: (feat, layerInstance) => {
+        let html = '';
+        if(feat.properties){
+          for(const k in feat.properties){
+            html += `<b>${k}:</b> ${feat.properties[k]}<br>`;
+          }
+        } else {
+          html = '<i>لا توجد خصائص</i>';
+        }
+        layerInstance.bindPopup(html);
+      }
+    });
+
+    allLayers[name] = layer;
+    try{
+      const b = layer.getBounds();
+      layerBounds[name] = b && b.isValid && b.isValid() ? b : null;
+    }catch(err){
+      layerBounds[name] = null;
+    }
+
+    // show default layers if desired (like buildings + rober)
+    if(name === "المباني 🏢" || name === "روبير 📍"){
+      map.addLayer(layer);
+    }
+
+    loadedCount++;
+    checkAllLoadedAndFinish();
+  }).catch(err=>{
+    console.error('فشل تحميل الطبقة:', info.file, err);
+    loadedCount++;
+    checkAllLoadedAndFinish();
+  });
+}
+
+/* ------------------------------
+   Build grouped layer list (UI)
+   ------------------------------ */
+const layerGroupsDiv = document.getElementById('layerGroups');
+
+for(const [groupName, layerNames] of Object.entries(groups)){
+ const groupDiv = document.createElement('div');
+groupDiv.className = 'layer-group collapsed'; // الآن مغلقة افتراضياً
+
+  const h4 = document.createElement('h4');
+  h4.textContent = groupName;
+  groupDiv.appendChild(h4);
+
+  const itemsDiv = document.createElement('div');
+  itemsDiv.className = 'group-items';
+
+  layerNames.forEach(layerName=>{
+    const item = document.createElement('div');
+    item.className = 'layer-item';
+    item.textContent = layerName;
+
+    item.addEventListener('click', ()=>{
+      const layer = allLayers[layerName];
+      if(!layer){
+        // not yet loaded
+        item.style.background = '#fff3cd';
+        item.innerHTML = layerName + ' (جارٍ التحميل...)';
+        return;
+      }
+      if(map.hasLayer(layer)){
+        map.removeLayer(layer);
+        item.style.background = '#f5f5f5';
+      } else {
+        map.addLayer(layer);
+        item.style.background = '#e0ffe0';
+        // fit to this layer if bounds available
+        const b = layerBounds[layerName];
+        if(b && b.isValid && b.isValid()){
+          map.fitBounds(b, {padding:[60,60]});
+        }
+      }
+    });
+
+    itemsDiv.appendChild(item);
+  });
+
+  groupDiv.appendChild(itemsDiv);
+  layerGroupsDiv.appendChild(groupDiv);
+
+  // collapse/expand group
+  h4.addEventListener('click', ()=>{
+    groupDiv.classList.toggle('collapsed');
+  });
+}
+
+/* -------------------------
+   Controls: show/hide/reset
+   ------------------------- */
+document.getElementById('showAll').addEventListener('click', ()=>{
+  for(const k in allLayers){
+    if(allLayers[k] && !map.hasLayer(allLayers[k])) map.addLayer(allLayers[k]);
+  }
+});
+document.getElementById('hideAll').addEventListener('click', ()=>{
+  for(const k in allLayers){
+    if(allLayers[k] && map.hasLayer(allLayers[k])) map.removeLayer(allLayers[k]);
+  }
+});
+document.getElementById('resetMap').addEventListener('click', ()=>{
+  map.setView([25.687,30.841], 16);
+});
+
+/* -------------------------
+   Sidebar open/close and clicks
+   ------------------------- */
+const sidebar = document.getElementById('sidebar');
+const toggleBtn = document.getElementById('toggleSidebar');
+
+toggleBtn.addEventListener('click', (e)=>{
+  e.stopPropagation();
+  sidebar.classList.toggle('hidden');
+  const expanded = !sidebar.classList.contains('hidden');
+  toggleBtn.setAttribute('aria-expanded', expanded);
+  sidebar.setAttribute('aria-hidden', !expanded);
+});
+// prevent clicks inside sidebar from closing it
+sidebar.addEventListener('click', e=> e.stopPropagation());
+// close sidebar when clicking outside
+document.addEventListener('click', ()=>{
+  if(!sidebar.classList.contains('hidden')){
+    sidebar.classList.add('hidden');
+    sidebar.setAttribute('aria-hidden','true');
+    toggleBtn.setAttribute('aria-expanded','false');
+  }
+});
+
+/* Accessibility: trap focus inside sidebar when opened (basic) */
+sidebar.addEventListener('keydown', (e)=>{
+  if(e.key === 'Escape'){
+    sidebar.classList.add('hidden');
+    sidebar.setAttribute('aria-hidden','true');
+    toggleBtn.setAttribute('aria-expanded','false');
+  }
+});
+
+/* Ensure loader is hidden if layers take too long (failsafe after 12s) */
+setTimeout(()=>{
+  const overlay=document.getElementById('loaderOverlay');
+  if(overlay && overlay.style.display !== 'none'){
+    overlay.style.display = 'none';
+  }
+}, 12000);
+  
+// 🖨️ وظيفة زر الطباعة
+document.getElementById('printMapBtn').addEventListener('click', ()=>{ window.print(); });
+
+
+// 🔄 تدوير الخريطة يدويًا (مع سهم الشمال)
+let currentRotation = 0; // الزاوية الحالية للخريطة بالدرجات
+const mapContainer = document.getElementById("map");
+const northArrow = document.getElementById("northArrow");
+
+// دالة لتطبيق الدوران على الخريطة والسهم
+function applyRotation(angle) {
+  currentRotation = angle % 360;
+  mapContainer.style.transform = `rotate(${currentRotation}deg)`;
+  northArrow.style.transform = `rotate(${-currentRotation}deg)`; // عكس دوران الخريطة
+}
+
+// عند الضغط على زر الشمال تعود الخريطة للوضع الطبيعي
+northArrow.addEventListener("click", () => {
+  applyRotation(0);
+});
+
+// 🔁 يمكن إضافة دوران عبر أزرار أو لوحة المفاتيح (اختياري)
+document.addEventListener("keydown", e => {
+  if (e.key === "ArrowLeft") applyRotation(currentRotation - 10); // تدوير يسار
+  if (e.key === "ArrowRight") applyRotation(currentRotation + 10); // تدوير يمين
+});
+
+
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,4 @@
+{
+  "type" : "FeatureCollection",
+  "features" : [{"type":"Feature","id":1,"geometry":{"type":"LineString","coordinates":[[30.543430695204428,25.463324976210114],[30.54642653469659,25.463063030304607]]},"properties":{"OBJECTID":1,"Layer":"telepone_line_room","Linetype":"Continuous","Shape_Length":302.78752811812757,"CODE":"3101","discription":"كابل تليفون عمق 0.7 م"}}]
+}

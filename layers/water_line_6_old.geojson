@@ -1,0 +1,4 @@
+{
+  "type" : "FeatureCollection",
+  "features" : [{"type":"Feature","id":1,"geometry":{"type":"LineString","coordinates":[[30.544515204526469,25.459988439714515],[30.544306764586789,25.460064494473485],[30.544111232116617,25.462102761186028]]},"properties":{"OBJECTID":1,"Layer":"water_6_old","Linetype":"Continuous","Elevation":0,"LineWt":30,"Shape_Length":249.33421737548181,"CODE":"6245","discription":"خط مياه 6 بوصة قديم عمق 1 م"}}]
+}

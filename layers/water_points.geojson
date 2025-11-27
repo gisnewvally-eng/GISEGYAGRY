@@ -1,0 +1,4 @@
+{
+  "type" : "FeatureCollection",
+  "features" : [{"type":"Feature","id":1,"geometry":{"type":"Point","coordinates":[30.544515204526469,25.459988439714515]},"properties":{"OBJECTID":1,"Layer":"mahbas","Linetype":"Continuous","CODE":"64","discription":"محبس مياه عمومي"}}]
+}

@@ -1,0 +1,4 @@
+{
+  "type" : "FeatureCollection",
+  "features" : [{"type":"Feature","id":1,"geometry":{"type":"Point","coordinates":[30.545996834052879,25.462481809134317]},"properties":{"OBJECTID":1,"Layer":"cap","Linetype":"Continuous","CODE":"72","discription":"end cap"}},{"type":"Feature","id":2,"geometry":{"type":"Point","coordinates":[30.545447684173578,25.462530794660438]},"properties":{"OBJECTID":2,"Layer":"cap","Linetype":"Continuous","CODE":"72","discription":"end cap"}},{"type":"Feature","id":3,"geometry":{"type":"Point","coordinates":[30.545680301615054,25.461854092203726]},"properties":{"OBJECTID":3,"Layer":"cap","Linetype":"Continuous","CODE":"72","discription":"end cap"}},{"type":"Feature","id":4,"geometry":{"type":"Point","coordinates":[30.544090991182042,25.461315083488536]},"properties":{"OBJECTID":4,"Layer":"cap","Linetype":"Continuous","CODE":"72","discription":"end cap"}}]
+}

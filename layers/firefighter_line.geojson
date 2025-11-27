@@ -1,0 +1,4 @@
+{
+  "type" : "FeatureCollection",
+  "features" : [{"type":"Feature","id":1,"geometry":{"type":"LineString","coordinates":[[30.544516920710539,25.459990694596687],[30.544320040744054,25.460072134267826],[30.544127427873676,25.462256596869757]]},"properties":{"OBJECTID":1,"Layer":"fire_line","Linetype":"Continuous","Shape_Length":264.62068138649505,"CODE":"999","discription":"خط حريق حديد 4 بوصة خارج الخدمة عمق 1 م"}}]
+}

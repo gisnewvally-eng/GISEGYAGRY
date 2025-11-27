@@ -1,0 +1,4 @@
+{
+  "type" : "FeatureCollection",
+  "features" : [{"type":"Feature","id":1,"geometry":{"type":"Point","coordinates":[30.544034920245156,25.463272149910559]},"properties":{"OBJECTID":1,"Layer":"telepone_line_room","Linetype":"Continuous","CODE":"31","discription":"غرفة خط ارضي"}},{"type":"Feature","id":2,"geometry":{"type":"Point","coordinates":[30.54599666701688,25.463100620319462]},"properties":{"OBJECTID":2,"Layer":"telepone_line_room","Linetype":"Continuous","CODE":"31","discription":"غرفة خط ارضي"}}]
+}

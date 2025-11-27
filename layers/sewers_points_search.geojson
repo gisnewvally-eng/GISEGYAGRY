@@ -1,0 +1,4 @@
+{
+  "type" : "FeatureCollection",
+  "features" : [{"type":"Feature","id":1,"geometry":{"type":"Point","coordinates":[30.545357705784621,25.462597358108802]},"properties":{"OBJECTID":1,"Layer":"taftesh_room","Linetype":"Continuous","CODE":"52","discription":"غرفة تفتيش"}},{"type":"Feature","id":2,"geometry":{"type":"Point","coordinates":[30.545354681882287,25.462378226181091]},"properties":{"OBJECTID":2,"Layer":"taftesh_room","Linetype":"Continuous","CODE":"52","discription":"غرفة تفتيش"}}]
+}

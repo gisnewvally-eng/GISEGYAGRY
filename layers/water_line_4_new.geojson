@@ -1,0 +1,4 @@
+{
+  "type" : "FeatureCollection",
+  "features" : [{"type":"Feature","id":1,"geometry":{"type":"LineString","coordinates":[[30.544111232116617,25.462102761186028],[30.544242123190543,25.462126594609455]]},"properties":{"OBJECTID":1,"Layer":"water_4_new","Linetype":"Continuous","Shape_Length":13.430526366369715,"CODE":"6244","discription":"خط مياه 4 بوصة جديد عمق 1 م"}},{"type":"Feature","id":2,"geometry":{"type":"LineString","coordinates":[[30.544053103029849,25.462534638065911],[30.544250980910956,25.462544615788488],[30.544517606076404,25.462549322886627]]},"properties":{"OBJECTID":2,"Layer":"water_4_new","Linetype":"Continuous","Shape_Length":46.766794069224538,"CODE":"6244","discription":"خط مياه 4 بوصة جديد عمق 1 م"}}]
+}

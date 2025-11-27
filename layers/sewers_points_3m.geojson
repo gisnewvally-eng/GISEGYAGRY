@@ -1,0 +1,4 @@
+{
+  "type" : "FeatureCollection",
+  "features" : [{"type":"Feature","id":1,"geometry":{"type":"Point","coordinates":[30.543888349130569,25.463096746909418]},"properties":{"OBJECTID":1,"Layer":"matbaq","Linetype":"Continuous","CODE":"503","discription":"مطبق عمق 3م"}}]
+}

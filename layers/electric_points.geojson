@@ -1,0 +1,4 @@
+{
+  "type" : "FeatureCollection",
+  "features" : [{"type":"Feature","id":1,"geometry":{"type":"Point","coordinates":[30.544375000003146,25.460002999999851]},"properties":{"OBJECTID":1,"Layer":"mohaelat","Linetype":"Continuous","CODE":"49","discription":"محول كهرباء"}},{"type":"Feature","id":2,"geometry":{"type":"Point","coordinates":[30.54391900000314,25.461938999999859]},"properties":{"OBJECTID":2,"Layer":"mohaelat","Linetype":"Continuous","CODE":"49","discription":"محول كهرباء"}}]
+}
