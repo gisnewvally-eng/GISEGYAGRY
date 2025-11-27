@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-<title>خريطة مرافق مجمع المصالح الحكومية - الوادي الجديد</title>
+<title>خريطة المعرض الزراعي - الوادي الجديد</title>
 <link rel="icon" type="image/png" href="logo.png" />
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -367,7 +367,7 @@ body.dark-mode #map #northArrow {
   <!-- Header with logo on the right (RTL) -->
   <header id="header">
     <img src="logo.png" class="logo" alt="شعار">
-    <h1>خريطة مرافق مجمع المصالح الحكومية بمحافظة الوادي الجديد</h1>
+    <h1>خريطة المعرض الزراعي بمحافظة الوادي الجديد</h1>
   </header>
 
  <!-- أزرار القوائم والطباعة بجانب بعض -->
@@ -416,7 +416,6 @@ body.dark-mode #map #northArrow {
   <!-- Footer -->
   <footer>
     إعداد جهاز معلومات شبكات المرافق - محافظة الوادي الجديد
-    <span class="line2">Designed By Eng. Ahmed Labib </span>
   </footer>
 
 <script>
@@ -453,16 +452,7 @@ document.querySelectorAll('input[name="basemap"]').forEach(radio => {
     // تفعيل وضع الليل
     setDarkMode(e.target.value === "dark");
 
-    // إخفاء أو إظهار طبقة المباني حسب نوع الخريطة
-    if(allLayers["المباني 🏢"]){
-      if(e.target.value === "satellite"){
-        map.removeLayer(allLayers["المباني 🏢"]);
-      } else {
-        map.addLayer(allLayers["المباني 🏢"]);
-      }
-    }
-  });
-});
+
 
 // تغيير لون نص أزرار اختيار الخريطة عند اختيار الخريطة السوداء
 // استهداف كل الـ labels المرتبطة بخيارات الخرائط
@@ -484,42 +474,109 @@ basemapLabels.forEach(radio => {
 /* --------------
    Icons (local files expected in repo)
    -------------- */
+// ----------------------------------
+//  أيقونات النقاط (Images folder)
+// ----------------------------------
 const icons = {
-  electric: L.icon({iconUrl:"electrictrans.png", iconSize:[26,26]}),
-  networking: L.icon({iconUrl:"networking.png", iconSize:[26,26]}),
-  valve: L.icon({iconUrl:"valve.png", iconSize:[26,26]}),
-  sewer: L.icon({iconUrl:"sewer.png", iconSize:[26,26]}),
-  station: L.icon({iconUrl:"محطة_الرفع-removebg-preview.png", iconSize:[28,28]}),
-  rober: L.icon({iconUrl:"rober.png", iconSize:[28,28]})
+  electrictrans: L.icon({ iconUrl: "images/electrictrans.png", iconSize: [26, 26] }),
+  streetlight: L.icon({ iconUrl: "images/streetlight.png", iconSize: [26, 26] }),
+  networking: L.icon({ iconUrl: "images/networking.png", iconSize: [26, 26] }),
+  valve: L.icon({ iconUrl: "images/valve.png", iconSize: [26, 26] }),
+  sewer: L.icon({ iconUrl: "images/sewer.png", iconSize: [26, 26] }),
+  sewer_station: L.icon({ iconUrl: "images/Sewer_station.png", iconSize: [26, 26] }),
+  gas_icon: L.icon({ iconUrl: "images/gas_icon.png", iconSize: [26, 26] }),
+  gas_end_icon: L.icon({ iconUrl: "images/gas_end_icon.png", iconSize: [26, 26] })
 };
+
 
 /* --------------------------
    Layers metadata (your GeoJSON files)
    -------------------------- */
+// ----------------------------------
+//  ملفات الطبقات (GeoJSON داخل مجلد layers)
+// ----------------------------------
 const layersInfo = {
-  "خطوط الكهرباء ⚡": {file:"layers/electric_lines.geojson", color:"#ff0000"},
-  "محولات الكهرباء ⚡": {file:"layers/electric_points.geojson", icon:icons.electric},
-  "خطوط الإنترنت": {file:"layers/landline_lines.geojson", color:"#00cc66"},
-  "نقاط توزيع الإنترنت": {file:"layers/landline_points.geojson", icon:icons.networking},
-  "خطوط المياه 🚰": {file:"layers/water_lines.geojson", color:"#007bff"},
-  "محابس المياه 🚰": {file:"layers/water_points.geojson", icon:icons.valve},
-  "خطوط الصرف الصحي 💧": {file:"layers/Sewer_line.geojson", color:"#800080"},
-  "غرف تفتيش الصرف": {file:"layers/Sewer_points3.geojson", icon:icons.sewer},
-  "غرف غسيل الصرف": {file:"layers/Sewer_points2.geojson", icon:icons.sewer},
-  "غرف صرف صحي": {file:"layers/Sewer_points1.geojson", icon:icons.sewer},
-  "محطة الرفع": {file:"layers/Sewer_station.geojson", icon:icons.station},
-  "المباني 🏢": {file:"layers/buildings.geojson", color:"#DEB887"},
-  "روبير 📍": {file:"layers/rober.geojson", icon:icons.rober}
+
+  "خطوط الكهرباء ⚡": { file: "layers/electric_lines.geojson", color: "#ff0000" },
+  "محولات الكهرباء ⚡": { file: "layers/electric_points.geojson", icon: icons.electrictrans },
+
+  "اعمدة الانارة 💡": { file: "layers/streetlight_points.geojson", icon: icons.streetlight },
+
+  "خطوط الإنترنت 🌐": { file: "layers/landline_lines.geojson", color: "#00cc66" },
+  "نقاط توزيع خطوط الإنترنت 🌐": { file: "layers/landline_points.geojson", icon: icons.networking },
+
+  "خطوط المياه 4 بوصة جديد 💧": { file: "layers/water_line_4_new.geojson", color: "#007bff" },
+  "خطوط المياه 4 بوصة قديم 💧": { file: "layers/water_line_4_old.geojson", color: "#004FA3" },
+  "خطوط المياه 6 بوصة جديد 💧": { file: "layers/water_line_6_new.geojson", color: "#007bff" },
+  "خطوط المياه 6 بوصة قديم 💧": { file: "layers/water_line_6_old.geojson", color: "#004FA3" },
+  "محابس المياه 🚰": { file: "layers/water_points.geojson", icon: icons.valve },
+
+  "خطوط الصرف الصحي 🚽": { file: "layers/Sewers_lines.geojson", color: "#800080" },
+  "غرف تفتيش الصرف 💿": { file: "layers/Sewer_points_search.geojson", icon: icons.sewer },
+  "غرف غسيل الصرف 💿": { file: "layers/Sewer_points.geojson", icon: icons.sewer },
+  "غرف صرف صحي (مطابق) 💿": { file: "layers/Sewer_points_3m.geojson", icon: icons.sewer },
+  
+
+  "خطوط مكافحة الحريق 🧯": { file: "layers/firefighter_line.geojson", color: "#750600" },
+
+  "خطوط الغاز ♨": { file: "layers/gas_lines.geojson", color: "#FF8C00" },
+  "خطوط الغاز الفرعية ♨": { file: "layers/gas_sublines.geojson", color: "#754100" },
+  "2 خطوط الغاز الفرعية ♨": { file: "layers/gas_sublines2.geojson", color: "#754100" },
+  "نقاط الغاز ♨": { file: "layers/gas_points.geojson", icon: icons.gas_icon },
+  "النهايات المغلقة للغاز ♨": { file: "layers/gas_endcap.geojson", icon: icons.gas_end_icon }
+
 };
 
+
 /* Groups (for UI) */
+// ----------------------------------
+//  تقسيم الطبقات داخل القائمة الجانبية
+// ----------------------------------
 const groups = {
-  "الكهرباء ⚡": ["خطوط الكهرباء ⚡","محولات الكهرباء ⚡"],
-  "الإنترنت": ["خطوط الإنترنت","نقاط توزيع الإنترنت"],
-  "المياه 🚰": ["خطوط المياه 🚰","محابس المياه 🚰"],
-  "الصرف الصحي 💧": ["خطوط الصرف الصحي 💧","غرف تفتيش الصرف","غرف غسيل الصرف","غرف صرف صحي","محطة الرفع"],
-  "المباني والمواقع": ["المباني 🏢","روبير 📍"]
+
+  "الكهرباء ⚡": [
+    "خطوط الكهرباء ⚡",
+    "محولات الكهرباء ⚡"
+  ],
+
+  "الإنارة 💡": [
+    "اعمدة الانارة 💡"
+  ],
+
+  "الإنترنت 🌐": [
+    "خطوط الإنترنت 🌐",
+    "نقاط توزيع خطوط الإنترنت 🌐"
+  ],
+
+  "المياه 💧🚰": [
+    "خطوط المياه 4 بوصة جديد 💧",
+    "خطوط المياه 4 بوصة قديم 💧",
+    "خطوط المياه 6 بوصة جديد 💧",
+    "خطوط المياه 6 بوصة قديم 💧",
+    "محابس المياه 🚰"
+  ],
+
+  "الصرف الصحي 💿🚽": [
+    "خطوط الصرف الصحي 🚽",
+    "غرف تفتيش الصرف 💿",
+    "غرف غسيل الصرف 💿",
+    "غرف صرف صحي (مطابق) 💿",
+  ],
+
+  "الغاز ♨": [
+    "خطوط الغاز ♨",
+    "خطوط الغاز الفرعية ♨",
+    "2 خطوط الغاز الفرعية ♨",
+    "نقاط الغاز ♨",
+    "النهايات المغلقة للغاز ♨"
+  ],
+
+  "مكافحة الحريق 🧯": [
+    "خطوط مكافحة الحريق 🧯"
+  ]
+
 };
+
 
 /* --------------------
    Load GeoJSON layers
@@ -588,10 +645,6 @@ for(const [name, info] of Object.entries(layersInfo)){
       layerBounds[name] = null;
     }
 
-    // show default layers if desired (like buildings + rober)
-    if(name === "المباني 🏢" || name === "روبير 📍"){
-      map.addLayer(layer);
-    }
 
     loadedCount++;
     checkAllLoadedAndFinish();
@@ -746,6 +799,7 @@ document.addEventListener("keydown", e => {
 </script>
 </body>
 </html>
+
 
 
 
