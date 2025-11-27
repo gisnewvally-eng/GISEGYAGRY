@@ -473,14 +473,14 @@ document.querySelectorAll('input[name="basemap"]').forEach(radio => {
 //  أيقونات النقاط (Images folder)
 // ----------------------------------
 const icons = {
-  electrictrans: L.icon({ iconUrl: "images/electrictrans.png", iconSize: [26, 26] }),
-  streetlight: L.icon({ iconUrl: "images/streetlight.png", iconSize: [26, 26] }),
-  networking: L.icon({ iconUrl: "images/networking.png", iconSize: [26, 26] }),
-  valve: L.icon({ iconUrl: "images/valve.png", iconSize: [26, 26] }),
-  sewer: L.icon({ iconUrl: "images/sewer.png", iconSize: [26, 26] }),
-  sewer_station: L.icon({ iconUrl: "images/Sewer_station.png", iconSize: [26, 26] }),
-  gas_icon: L.icon({ iconUrl: "images/gas_icon.png", iconSize: [26, 26] }),
-  gas_end_icon: L.icon({ iconUrl: "images/gas_end_icon.png", iconSize: [26, 26] })
+  electrictrans: L.icon({ iconUrl: "images/electrictrans.png", iconSize: [18, 18] }),
+  streetlight: L.icon({ iconUrl: "images/streetlight.png", iconSize: [18, 18] }),
+  networking: L.icon({ iconUrl: "images/networking.png", iconSize: [18, 18] }),
+  valve: L.icon({ iconUrl: "images/valve.png", iconSize: [18, 18] }),
+  sewer: L.icon({ iconUrl: "images/sewer.png", iconSize: [18, 18] }),
+  sewer_station: L.icon({ iconUrl: "images/Sewer_station.png", iconSize: [18, 18] }),
+  gas_icon: L.icon({ iconUrl: "images/gas_valve.png", iconSize: [18, 18] }),
+  gas_end_icon: L.icon({ iconUrl: "images/gas_end_icon.png", iconSize: [18, 18] })
 };
 
 
@@ -517,7 +517,7 @@ const layersInfo = {
   "خطوط الغاز ♨": { file: "layers/gas_lines.geojson", color: "#FF8C00" },
   "خطوط الغاز الفرعية ♨": { file: "layers/gas_sublines.geojson", color: "#754100" },
   "الخطوط الفرعية للغاز (2) ♨": { file: "layers/gas_sublines2.geojson", color: "#754100" },
-  "نقاط الغاز ♨": { file: "layers/gas_points.geojson", icon: icons.gas_icon },
+  "محابس الغاز ♨": { file: "layers/gas_valves.geojson", icon: icons.gas_icon },
   "النهايات المغلقة للغاز ♨": { file: "layers/gas_endcap.geojson", icon: icons.gas_end_icon }
 
 };
@@ -562,7 +562,7 @@ const groups = {
     "خطوط الغاز ♨",
     "خطوط الغاز الفرعية ♨",
     "الخطوط الفرعية للغاز (2) ♨",
-    "نقاط الغاز ♨",
+    "محابس الغاز ♨",
     "النهايات المغلقة للغاز ♨"
   ],
 
@@ -786,6 +786,7 @@ northArrow.addEventListener("click", () => {
 </script>
 </body>
 </html>
+
 
 
 
