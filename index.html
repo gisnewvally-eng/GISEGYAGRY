@@ -616,7 +616,6 @@ for(const [name, info] of Object.entries(layersInfo)){
   }).then(data=>{
     const layer = L.geoJSON(data, {
       style: feat=>{
-        if(name === "المباني 🏢") return {color:"#8B4513", weight:1, fillColor:"#DEB887", fillOpacity:0.4};
         return {color: info.color || "#3388ff", weight:2, fillOpacity:0.7};
       },
       pointToLayer: (feat, latlng) => {
@@ -799,6 +798,7 @@ document.addEventListener("keydown", e => {
 </script>
 </body>
 </html>
+
 
 
 
