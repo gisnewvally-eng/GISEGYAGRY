@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-<title>خريطة المعرض الزراعي - الوادي الجديد</title>
+<title>خريطة مرافق المعرض الزراعي - الوادي الجديد</title>
 <link rel="icon" type="image/png" href="logo.png" />
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -367,7 +367,7 @@ body.dark-mode #map #northArrow {
   <!-- Header with logo on the right (RTL) -->
   <header id="header">
     <img src="logo.png" class="logo" alt="شعار">
-    <h1>خريطة المعرض الزراعي بمحافظة الوادي الجديد</h1>
+    <h1>خريطة مرافق المعرض الزراعي بمحافظة الوادي الجديد</h1>
   </header>
 
  <!-- أزرار القوائم والطباعة بجانب بعض -->
@@ -508,8 +508,8 @@ const layersInfo = {
 
   "خطوط الصرف الصحي 🚽": { file: "layers/sewers_lines.geojson", color: "#800080" },
   "غرف تفتيش الصرف 💿": { file: "layers/sewers_points_search.geojson", icon: icons.sewer },
-  "غرف غسيل الصرف 💿": { file: "layers/sewers_points.geojson", icon: icons.sewer },
-  "غرف صرف صحي (مطابق) 💿": { file: "layers/sewers_points_3m.geojson", icon: icons.sewer },
+  "غرف صرف صحي (مطابق) 💿": { file: "layers/sewers_points.geojson", icon: icons.sewer },
+  "غرف صرف صحي (مطابق عمق 3 متر) 💿": { file: "layers/sewers_points_3m.geojson", icon: icons.sewer },
   
 
   "خطوط مكافحة الحريق 🧯": { file: "layers/firefighter_line.geojson", color: "#750600" },
@@ -554,8 +554,8 @@ const groups = {
   "الصرف الصحي 💿🚽": [
     "خطوط الصرف الصحي 🚽",
     "غرف تفتيش الصرف 💿",
-    "غرف غسيل الصرف 💿",
     "غرف صرف صحي (مطابق) 💿",
+    "غرف صرف صحي (مطابق عمق 3 متر) 💿",
   ],
 
   "الغاز ♨": [
@@ -786,6 +786,7 @@ northArrow.addEventListener("click", () => {
 </script>
 </body>
 </html>
+
 
 
 
